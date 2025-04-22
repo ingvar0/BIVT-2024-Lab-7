@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Lab_7.Blue_3;
 
-namespace Lab7
+namespace Lab_7
 {
     public class Blue_3
     {
@@ -97,12 +98,12 @@ namespace Lab7
 
         public class BasketballPlayer : Participant
         {
-            public BasketballPlayer(string name, string surname) : base (name, surname) { }
+            public BasketballPlayer(string name, string surname) : base(name, surname) { }
 
-            public override bool IsExpelled 
+            public override bool IsExpelled
             {
                 get
-                { 
+                {
                     if (_penaltyTimes == null || _penaltyTimes.Length == 0) return false;
 
                     int countFiveFoul = 0;
@@ -129,36 +130,30 @@ namespace Lab7
         }
 
 
-        public class HockeyPlayer: Participant
+        public class HockeyPlayer : Participant
         {
             private static int totalCount = 0;
-            private static double totalTime = 0;
+            private static double totalPenaltyTime = 0;
 
-            public HockeyPlayer(string name, string surname) : base(name, surname) 
-            { 
+            public HockeyPlayer(string name, string surname) : base(name, surname)
+            {
                 totalCount += 1;
-            }    
+            }
 
             public override bool IsExpelled
             {
                 get
                 {
-                    // Переделать метод 
                     if (_penaltyTimes == null || _penaltyTimes.Length == 0) return false;
-                    bool first = false;
-                    for (int i = 0; i < _penaltyTimes.Length; i++)
+
+                    foreach (int penalty in _penaltyTimes)
                     {
-                        if (_penaltyTimes[i] == 10)
-                        {
-                            first = true;
-                            break;
-                        }
+                        if (penalty == 10) return true;
                     }
-                    if (first) return true;
 
                     if (totalCount == 0) return false;
-                    double aver = totalTime / totalCount;
-                    if (Total > (0.1 * aver)) return true;
+                    double averagePenaltyTime = totalPenaltyTime / totalCount;
+                    if (Total > (0.1 * averagePenaltyTime)) return true;
 
                     return false;
                 }
@@ -166,8 +161,10 @@ namespace Lab7
 
             public override void PlayMatch(int time)
             {
-                if (time != 0 && time != 2 && time != 5 && time != 10) return;
-                totalTime += time;
+                if (time < 0 && time != 0 && time != 2 && time != 5 && time != 10) return; 
+
+                totalPenaltyTime += time;
+
                 base.PlayMatch(time);
             }
         }

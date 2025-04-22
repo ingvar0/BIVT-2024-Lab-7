@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using Lab_7;
 
-namespace Lab7
+namespace Lab_7
 {
     public class Blue_1
     {
@@ -47,7 +43,7 @@ namespace Lab7
 
         public class HumanResponse : Response
         {
-            public string _surname;
+            private string _surname;
 
             public string Surname => _surname;
 
@@ -61,11 +57,14 @@ namespace Lab7
                 if (responses == null) { return 0; }
 
                 int k = 0;
-                foreach (HumanResponse response in responses)
+                foreach (Response response in responses)
                 {
-                    if (response.Name == Name && response.Surname == _surname)
+                    if (response is HumanResponse humanResponse)
                     {
-                        k++;
+                        if (humanResponse.Name == Name && humanResponse.Surname == _surname)
+                        {
+                            k++;
+                        }
                     }
                 }
                 _votes = k;

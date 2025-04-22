@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab7
+namespace Lab_7
 {
     public class Blue_2
     {
@@ -82,7 +82,6 @@ namespace Lab7
         {
             public WaterJump5m(string name, int bank) : base(name, bank) { }
 
-
             public override double[] Prize
             {
                 get
@@ -92,25 +91,30 @@ namespace Lab7
                     Participant.Sort(Participants);
 
                     double[] prizes = new double[Participants.Length];
-                    prizes[0] = Bank * 0.4;
-                    prizes[1] = Bank * 0.25;
-                    prizes[2] = Bank * 0.15;
-
                     int countUpMiddle = Participants.Length / 2;
-                    if (countUpMiddle < 3 || countUpMiddle > 10) return prizes;
 
-                    double remainingPrize = Bank * 0.2; // 20% от банка
-                    double prizePerPerson = remainingPrize / countUpMiddle;
+                    if (countUpMiddle < 3 || countUpMiddle > 10)
+                    { 
+                        prizes[0] = Bank * 0.4;
+                        prizes[1] = Bank * 0.25;
+                        prizes[2] = Bank * 0.15;
+                        return prizes;
+                    }
 
+                    double prizePerPerson = Bank * 0.2 / countUpMiddle;
                     for (int i = 0; i < countUpMiddle; i++)
                     {
-                        prizes[i] += prizePerPerson;
+                        prizes[i] = prizePerPerson;
                     }
+
+                    prizes[0] += Bank * 0.4;
+                    prizes[1] += Bank * 0.25;
+                    prizes[2] += Bank * 0.15;
+
                     return prizes;
                 }
             }
         }
-
 
         public struct Participant
         {

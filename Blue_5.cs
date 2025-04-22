@@ -170,7 +170,7 @@ namespace Lab7
                     }
                 }
 
-                return validPlaces > 0 ? 100 / (sum / validPlaces) : 0;
+                return validPlaces > 0 ? 100.0 / (sum / validPlaces) : 0;
             }
         }
 
@@ -196,7 +196,7 @@ namespace Lab7
                     }
                 }
 
-                return validPlaces > 0 ? 100 * sum * validPlaces / product : 0;
+                return validPlaces > 0 ? (100.0 * sum * validPlaces) / product : 0;
             }
         }
     }

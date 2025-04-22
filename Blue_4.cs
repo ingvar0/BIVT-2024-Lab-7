@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static Lab_7.Blue_4;
 
-namespace Lab7
+namespace Lab_7
 {
     public class Blue_4
     {
@@ -69,13 +68,13 @@ namespace Lab7
         }
 
 
-        public class ManTeam: Team
+        public class ManTeam : Team
         {
             public ManTeam(string name) : base(name) { }
         }
 
 
-        public class WomanTeam : Team 
+        public class WomanTeam : Team
         {
             public WomanTeam(string name) : base(name) { }
         }
@@ -121,98 +120,92 @@ namespace Lab7
             public void Add(Team[] teams)
             {
                 if (teams == null) return;
-                
+
                 foreach (Team team in teams)
                 {
                     Add(team);
                 }
-
             }
 
             public void Sort()
             {
                 if (_manTeams == null || _womanTeams == null) return;
 
-                for (int i = 0; i < _manCount - 1; i++)
+                void SortTeamArray<T>(T[] teams, int count) where T : Team
                 {
-                    for (int j = 0; j < _manCount - i - 1; j++)
+                    for (int i = 0; i < count - 1; i++)
                     {
-                        if (_manTeams[j].TotalScore < _manTeams[j + 1].TotalScore)
+                        for (int j = 0; j < count - i - 1; j++)
                         {
-                            ManTeam dop1= _manTeams[j];
-                            _manTeams[j] = _manTeams[j + 1];
-                            _manTeams[j] = dop1;
+                            if (teams[j].TotalScore < teams[j + 1].TotalScore)
+                            {
+                                T temp = teams[j];
+                                teams[j] = teams[j + 1];
+                                teams[j + 1] = temp;
+                            }
                         }
                     }
                 }
 
-                for (int i = 0; i < _womanCount - 1; i++)
-                {
-                    for (int j = 0; j < _womanCount - i - 1; j++)
-                    {
-                        if (_womanTeams[j].TotalScore < _womanTeams[j + 1].TotalScore)
-                        {
-                            WomanTeam dop2 = _womanTeams[j];
-                            _womanTeams[j] = _womanTeams[j + 1];
-                            _womanTeams[j] = dop2;
-                        }
-                    }
-                }
+                SortTeamArray(_manTeams, _manCount);
+                SortTeamArray(_womanTeams, _womanCount);
             }
 
             public static Group Merge(Group group1, Group group2, int size)
             {
                 Group finalGroup = new Group("Финалисты");
 
-                int manSize = size / 2;
-                MergeTeamArraysIntoGroup(
-                    group1.ManTeams, group1.ManTeams.Length,
-                    group2.ManTeams, group2.ManTeams.Length,
-                    manSize, finalGroup, isManTeam: true);
+                group1.Sort();
+                group2.Sort();
 
-                int womanSize = size / 2;
-                MergeTeamArraysIntoGroup(
-                    group1.WomanTeams, group1.WomanTeams.Length,
-                    group2.WomanTeams, group2.WomanTeams.Length,
-                    womanSize, finalGroup, isManTeam: false);
+                MergeTeams(group1.ManTeams, group1._manCount,
+                           group2.ManTeams, group2._manCount,
+                           size / 2, finalGroup, isManTeam: true);
+
+                MergeTeams(group1.WomanTeams, group1._womanCount,
+                           group2.WomanTeams, group2._womanCount,
+                           size / 2, finalGroup, isManTeam: false);
 
                 return finalGroup;
             }
 
-            private static void MergeTeamArraysIntoGroup(
-                Team[] arr1, int count1,
-                Team[] arr2, int count2,
-                int size, Group outputGroup, bool isManTeam)
+            private static void MergeTeams(Team[] teams1, int count1,
+                                         Team[] teams2, int count2,
+                                         int size, Group outputGroup, bool isManTeam)
             {
                 int i = 0, j = 0, added = 0;
 
                 while (added < size && i < count1 && j < count2)
                 {
-                    if (arr1[i].TotalScore >= arr2[j].TotalScore)
+                    if (teams1[i].TotalScore >= teams2[j].TotalScore)
                     {
-                        AddTeamToGroup(outputGroup, arr1[i++], isManTeam);
+                        AddTeam(outputGroup, teams1[i], isManTeam);
+                        i++;
                     }
                     else
                     {
-                        AddTeamToGroup(outputGroup, arr2[j++], isManTeam);
+                        AddTeam(outputGroup, teams2[j], isManTeam);
+                        j++;
                     }
                     added++;
                 }
 
                 while (added < size && i < count1)
                 {
-                    AddTeamToGroup(outputGroup, arr1[i++], isManTeam);
+                    AddTeam(outputGroup, teams1[i], isManTeam);
+                    i++;
                     added++;
                 }
 
                 while (added < size && j < count2)
                 {
-                    AddTeamToGroup(outputGroup, arr2[j++], isManTeam);
+                    AddTeam(outputGroup, teams2[j], isManTeam);
+                    j++;
                     added++;
                 }
             }
 
-            private static void AddTeamToGroup(Group group, Team team, bool isManTeam)
+            private static void AddTeam(Group group, Team team, bool isManTeam)
             {
                 if (isManTeam && team is ManTeam manTeam)
                 {
