@@ -153,55 +153,92 @@ namespace Lab_7
 
             public static Group Merge(Group group1, Group group2, int size)
             {
+                if (group1 == null || group2 == null || size <= 0)
+                    return new Group("Финалисты");
+
                 Group finalGroup = new Group("Финалисты");
 
                 group1.Sort();
                 group2.Sort();
 
-                MergeTeams(group1.ManTeams, group1._manCount,
-                           group2.ManTeams, group2._manCount,
-                           size / 2, finalGroup, isManTeam: true);
+                MergeTeamArrays(group1.ManTeams, group1._manCount,
+                               group2.ManTeams, group2._manCount,
+                               size / 2, finalGroup, isManTeam: true);
 
-                MergeTeams(group1.WomanTeams, group1._womanCount,
-                           group2.WomanTeams, group2._womanCount,
-                           size / 2, finalGroup, isManTeam: false);
+                MergeTeamArrays(group1.WomanTeams, group1._womanCount,
+                               group2.WomanTeams, group2._womanCount,
+                               size / 2, finalGroup, isManTeam: false);
 
                 return finalGroup;
             }
 
-            private static void MergeTeams(Team[] teams1, int count1,
-                                         Team[] teams2, int count2,
-                                         int size, Group outputGroup, bool isManTeam)
+            private static void MergeTeamArrays(Team[] teams1, int count1,
+                                              Team[] teams2, int count2,
+                                              int size, Group outputGroup, bool isManTeam)
             {
                 int i = 0, j = 0, added = 0;
 
                 while (added < size && i < count1 && j < count2)
                 {
-                    if (teams1[i].TotalScore >= teams2[j].TotalScore)
+                    if (teams1[i] != null && teams2[j] != null)
                     {
-                        AddTeam(outputGroup, teams1[i], isManTeam);
-                        i++;
+                        if (teams1[i].TotalScore >= teams2[j].TotalScore)
+                        {
+                            AddTeamToGroup(outputGroup, teams1[i], isManTeam);
+                            i++;
+                        }
+                        else
+                        {
+                            AddTeamToGroup(outputGroup, teams2[j], isManTeam);
+                            j++;
+                        }
+                        added++;
                     }
                     else
                     {
-                        AddTeam(outputGroup, teams2[j], isManTeam);
-                        j++;
+                        if (teams1[i] == null) i++;
+                        if (teams2[j] == null) j++;
                     }
-                    added++;
                 }
 
                 while (added < size && i < count1)
                 {
-                    AddTeam(outputGroup, teams1[i], isManTeam);
+                    if (teams1[i] != null)
+                    {
+                        AddTeamToGroup(outputGroup, teams1[i], isManTeam);
+                        added++;
+                    }
                     i++;
-                    added++;
                 }
 
                 while (added < size && j < count2)
                 {
-                    AddTeam(outputGroup, teams2[j], isManTeam);
+                    if (teams2[j] != null)
+                    {
+                        AddTeamToGroup(outputGroup, teams2[j], isManTeam);
+                        added++;
+                    }
                     j++;
-                    added++;
+                }
+            }
+
+            private static void AddTeamToGroup(Group group, Team team, bool isManTeam)
+            {
+                if (team == null) return;
+
+                if (isManTeam && team is ManTeam manTeam)
+                {
+                    if (group._manCount < 12)
+                    {
+                        group._manTeams[group._manCount++] = manTeam;
+                    }
+                }
+                else if (!isManTeam && team is WomanTeam womanTeam)
+                {
+                    if (group._womanCount < 12)
+                    {
+                        group._womanTeams[group._womanCount++] = womanTeam;
+                    }
                 }
             }
 

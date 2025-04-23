@@ -112,11 +112,10 @@ namespace Lab_7
                         if (_penaltyTimes[i] == 5) countFiveFoul++;
                     }
 
-                    if (countFiveFoul > (_penaltyTimes.Length * 0.1)) return true;
+                    bool tooManyFiveFouls = countFiveFoul > (_penaltyTimes.Length * 0.1);
+                    bool totalFoulsTooHigh = Total > (2 * _penaltyTimes.Length);
 
-                    if (Total > (2 * _penaltyTimes.Length)) return true;
-
-                    return false;
+                    return tooManyFiveFouls || totalFoulsTooHigh;
                 }
             }
 
@@ -146,16 +145,14 @@ namespace Lab_7
                 {
                     if (_penaltyTimes == null || _penaltyTimes.Length == 0) return false;
 
-                    foreach (int penalty in _penaltyTimes)
+                    for (int i = 0; i < _penaltyTimes.Length; i++)
                     {
-                        if (penalty == 10) return true;
+                        if (_penaltyTimes[i] == 10) return true;
                     }
 
                     if (totalCount == 0) return false;
                     double averagePenaltyTime = totalPenaltyTime / totalCount;
-                    if (Total > (0.1 * averagePenaltyTime)) return true;
-
-                    return false;
+                    return Total > (0.1 * averagePenaltyTime);
                 }
             }
 

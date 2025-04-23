@@ -14,53 +14,45 @@ namespace Lab_7
             private int _bank;
             private Participant[] _participants;
 
-
             public string Name => _name;
             public int Bank => _bank;
             public Participant[] Participants => _participants;
-
 
             public WaterJump(string name, int bank)
             {
                 _name = name;
                 _bank = bank;
-                _participants = [];
+                _participants = new Participant[0]; 
             }
-
 
             public abstract double[] Prize { get; }
 
-
-            public void Add(Participant p)
+            public void Add(Participant participant)
             {
                 if (_participants == null) return;
-                Participant[] new_p = new Participant[_participants.Length + 1];
-                Array.Copy(_participants, new_p, _participants.Length);
-                new_p[_participants.Length] = p;
-                _participants = new_p;
-            }
-
-
-            public void Add(Participant[] p)
-            {
-                if (p == null || p.Length < 1 || _participants == null) return;
-                int index = 0;
-                Participant[] new_p = new Participant[_participants.Length + p.Length];
-                Array.Copy(_participants, new_p, _participants.Length);
-                for (int i = _participants.Length; i < new_p.Length; i++)
+                Participant[] arr = new Participant[_participants.Length + 1];
+                for (int i = 0; i < _participants.Length; i++)
                 {
-                    new_p[i] = p[index];
-                    index++;
+                    arr[i] = _participants[i];
                 }
-                _participants = new_p;
+                arr[_participants.Length] = participant;
+                _participants = arr;
             }
-        }
 
+            public void Add(Participant[] participants)
+            {
+                if (_participants == null || participants == null || participants.Length == 0) return;
+                foreach (Participant participant in participants)
+                {
+                    Add(participant);
+                }
+            }
+
+        }
 
         public class WaterJump3m : WaterJump
         {
             public WaterJump3m(string name, int bank) : base(name, bank) { }
-
 
             public override double[] Prize
             {
@@ -76,7 +68,6 @@ namespace Lab_7
                 }
             }
         }
-
 
         public class WaterJump5m : WaterJump
         {
@@ -94,7 +85,7 @@ namespace Lab_7
                     int countUpMiddle = Participants.Length / 2;
 
                     if (countUpMiddle < 3 || countUpMiddle > 10)
-                    { 
+                    {
                         prizes[0] = Bank * 0.4;
                         prizes[1] = Bank * 0.25;
                         prizes[2] = Bank * 0.15;

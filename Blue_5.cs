@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Lab7
+namespace Lab_7
 {
     public class Blue_5
     {
@@ -28,7 +24,7 @@ namespace Lab7
 
             public void SetPlace(int place)
             {
-                if (!_placeSet)
+                if (!_placeSet && place > 0)
                 {
                     _place = place;
                     _placeSet = true;
@@ -44,7 +40,7 @@ namespace Lab7
         public abstract class Team
         {
             private string _name;
-            private Sportsman[] _sportsmen;
+            protected Sportsman[] _sportsmen; // Changed to protected
             private int _count;
 
             public string Name => _name;
@@ -63,10 +59,9 @@ namespace Lab7
                 get
                 {
                     int score = 0;
-                    foreach (var s in _sportsmen)
+                    for (int i = 0; i < _count; i++)
                     {
-                        if (s == null) continue;
-                        switch (s.Place)
+                        switch (_sportsmen[i].Place)
                         {
                             case 1: score += 5; break;
                             case 2: score += 4; break;
@@ -84,10 +79,10 @@ namespace Lab7
                 get
                 {
                     int topPlace = int.MaxValue;
-                    foreach (var s in _sportsmen)
+                    for (int i = 0; i < _count; i++)
                     {
-                        if (s != null && s.Place > 0 && s.Place < topPlace)
-                            topPlace = s.Place;
+                        if (_sportsmen[i].Place > 0 && _sportsmen[i].Place < topPlace)
+                            topPlace = _sportsmen[i].Place;
                     }
                     return topPlace == int.MaxValue ? 0 : topPlace;
                 }
@@ -95,7 +90,7 @@ namespace Lab7
 
             public void Add(Sportsman sportsman)
             {
-                if (_count < 6)
+                if (_count < 6 && sportsman != null)
                 {
                     _sportsmen[_count++] = sportsman;
                 }
@@ -103,6 +98,8 @@ namespace Lab7
 
             public void Add(Sportsman[] sportsmen)
             {
+                if (sportsmen == null) return;
+
                 foreach (var s in sportsmen)
                 {
                     if (_count >= 6) break;
@@ -117,11 +114,15 @@ namespace Lab7
                 if (teams == null || teams.Length == 0) return null;
 
                 Team champion = teams[0];
-                foreach (var team in teams)
+                double maxStrength = champion.GetTeamStrength();
+
+                for (int i = 1; i < teams.Length; i++)
                 {
-                    if (team.GetTeamStrength() > champion.GetTeamStrength())
+                    double currentStrength = teams[i].GetTeamStrength();
+                    if (currentStrength > maxStrength)
                     {
-                        champion = team;
+                        champion = teams[i];
+                        maxStrength = currentStrength;
                     }
                 }
                 return champion;
@@ -129,6 +130,8 @@ namespace Lab7
 
             public static void Sort(Team[] teams)
             {
+                if (teams == null) return;
+
                 Array.Sort(teams, (t1, t2) =>
                 {
                     int scoreCompare = t2.SummaryScore.CompareTo(t1.SummaryScore);
@@ -140,9 +143,9 @@ namespace Lab7
             {
                 Console.WriteLine($"Команда: {Name}");
                 Console.WriteLine("Состав:");
-                foreach (var s in _sportsmen)
+                for (int i = 0; i < _count; i++)
                 {
-                    s?.Print();
+                    _sportsmen[i].Print();
                 }
                 Console.WriteLine($"Баллы: {SummaryScore}");
                 Console.WriteLine($"Лучшее место: {TopPlace}");
@@ -161,11 +164,11 @@ namespace Lab7
                 double sum = 0;
                 int validPlaces = 0;
 
-                foreach (var s in Sportsmen)
+                for (int i = 0; i < Count; i++)
                 {
-                    if (s != null && s.Place > 0)
+                    if (_sportsmen[i].Place > 0)
                     {
-                        sum += s.Place;
+                        sum += _sportsmen[i].Place;
                         validPlaces++;
                     }
                 }
@@ -186,12 +189,12 @@ namespace Lab7
                 double product = 1;
                 int validPlaces = 0;
 
-                foreach (var s in Sportsmen)
+                for (int i = 0; i < Count; i++)
                 {
-                    if (s != null && s.Place > 0)
+                    if (_sportsmen[i].Place > 0)
                     {
-                        sum += s.Place;
-                        product *= s.Place;
+                        sum += _sportsmen[i].Place;
+                        product *= _sportsmen[i].Place;
                         validPlaces++;
                     }
                 }
