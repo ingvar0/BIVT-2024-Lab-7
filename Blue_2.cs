@@ -14,46 +14,41 @@ namespace Lab_7
             private int _bank;
             private Participant[] _participants;
 
-            public string Name => _name;
-            public int Bank => _bank;
-            public Participant[] Participants => _participants;
-
-            public WaterJump(string name, int bank)
+            public string Name { get { return _name; } }
+            public int Bank { get { return _bank; } }
+            public Participant[] Participants
             {
-                _name = name;
-                _bank = bank;
-                _participants = new Participant[0]; 
+                get
+                { 
+                    return _participants; 
+                }
             }
-
             public abstract double[] Prize { get; }
-
+            public WaterJump(string Name, int Bank)
+            {
+                _name = Name;
+                _bank = Bank;
+                _participants = new Participant[0];
+            }
             public void Add(Participant participant)
             {
-                if (_participants == null) return;
-                Participant[] arr = new Participant[_participants.Length + 1];
-                for (int i = 0; i < _participants.Length; i++)
-                {
-                    arr[i] = _participants[i];
-                }
-                arr[_participants.Length] = participant;
-                _participants = arr;
+                Participant[] nparticipants = new Participant[_participants.Length + 1];
+                for (int i = 0; i < _participants.Length; i++) { nparticipants[i] = _participants[i]; }
+                nparticipants[nparticipants.Length - 1] = participant;
+                _participants = nparticipants;
             }
-
             public void Add(Participant[] participants)
             {
-                if (_participants == null || participants == null || participants.Length == 0) return;
+                if (participants == null) return;
                 foreach (Participant participant in participants)
                 {
                     Add(participant);
                 }
             }
-
         }
-
         public class WaterJump3m : WaterJump
         {
             public WaterJump3m(string name, int bank) : base(name, bank) { }
-
             public override double[] Prize
             {
                 get
@@ -61,126 +56,117 @@ namespace Lab_7
                     if (Participants == null || Participants.Length < 3) return null;
 
                     double[] prizes = new double[3];
-                    prizes[0] = Bank * 0.5;
-                    prizes[1] = Bank * 0.3;
-                    prizes[2] = Bank * 0.2;
+                    prizes[0] = 0.5 * Bank;
+                    prizes[1] = 0.3 * Bank;
+                    prizes[2] = 0.2 * Bank;
                     return prizes;
                 }
             }
-        }
 
+        }
         public class WaterJump5m : WaterJump
         {
             public WaterJump5m(string name, int bank) : base(name, bank) { }
-
             public override double[] Prize
             {
                 get
                 {
                     if (Participants == null || Participants.Length < 3) return null;
-
-                    Participant.Sort(Participants);
-
-                    double[] prizes = new double[Participants.Length];
-                    int countUpMiddle = Participants.Length / 2;
-
-                    if (countUpMiddle < 3 || countUpMiddle > 10)
+                    int qp = 10;
+                    if (Participants.Length / 2 < qp)
                     {
-                        prizes[0] = Bank * 0.4;
-                        prizes[1] = Bank * 0.25;
-                        prizes[2] = Bank * 0.15;
-                        return prizes;
+                        qp = Participants.Length / 2;
                     }
-
-                    double prizePerPerson = Bank * 0.2 / countUpMiddle;
-                    for (int i = 0; i < countUpMiddle; i++)
+                    double n = 20.0 / qp;
+                    double[] prizes = new double[qp];
+                    for (int i = 0; i < qp; i++)
                     {
-                        prizes[i] = prizePerPerson;
+                        prizes[i] = (n / 100) * Bank;
                     }
-
-                    prizes[0] += Bank * 0.4;
-                    prizes[1] += Bank * 0.25;
-                    prizes[2] += Bank * 0.15;
-
+                    prizes[0] += 0.4 * Bank;
+                    prizes[1] += 0.25 * Bank;
+                    prizes[2] += 0.15 * Bank;
                     return prizes;
+
                 }
             }
         }
-
         public struct Participant
         {
-            private readonly string _name;
-            private readonly string _surname;
-            private readonly int[,] marks;
-            private int jumpNumber;
+            private string _Name;
+            private string _Surname;
+            private int[,] _Marks;
+            private int _JNumber;
 
-            public Participant(string name, string surname)
-            {
-                _name = name;
-                _surname = surname;
-                marks = new int[2, 5];
-                for (int i = 0; i < 2; i++)
-                {
-                    for (int j = 0; j < 5; j++)
-                    {
-                        marks[i, j] = 0;
-                    }
-                }
-                jumpNumber = 0;
-            }
+            public string Name { get { return _Name; } }
+            public string Surname { get { return _Surname; } }
 
-            public string Name => _name;
-            public string Surname => _surname;
             public int[,] Marks
             {
                 get
                 {
-                    if (marks == null)
+                    if (_Marks == null || _Marks.GetLength(0) < 1 || _Marks.GetLength(1) < 1) return null;
+                    int[,] NMarks = new int[_Marks.GetLength(0), _Marks.GetLength(1)];
+                    for (int i = 0; i < _Marks.GetLength(0); i++)
                     {
-                        return null;
+                        for (int j = 0; j < _Marks.GetLength(1); j++)
+                        {
+                            NMarks[i, j] = _Marks[i, j];
+                        }
                     }
-
-                    int[,] copy = new int[marks.GetLength(0), marks.GetLength(1)];
-                    Array.Copy(marks, copy, marks.Length);
-                    return copy;
+                    return NMarks;
                 }
             }
 
-            public void Jump(int[] results)
+            public Participant(string Name1, string Surname1)
             {
-                if (results == null || results.Length < marks.GetLength(1)) return;
-                {
-                    for (int i = 0; i < marks.GetLength(1); ++i)
-                    {
-                        marks[jumpNumber, i] = results[i];
-                    }
-                }
-                jumpNumber += 1;
-                if (jumpNumber == 2) jumpNumber = 0;
+                _Name = Name1;
+                _Surname = Surname1;
+                _Marks = new int[2, 5];
+                _JNumber = 0;
             }
 
             public int TotalScore
             {
                 get
                 {
-                    if (marks == null) return 0;
+                    if (_Marks == null || _Marks.GetLength(0) < 1 || _Marks.GetLength(1) < 1)
+                        return 0;
                     int sum = 0;
-                    for (int i = 0; i < marks.GetLength(0); i++)
-                    {
-                        for (int j = 0; j < marks.GetLength(1); j++)
+                    for (int i = 0; i < _Marks.GetLength(0); i++)
+                        for (int j = 0; j < _Marks.GetLength(1); j++)
                         {
-                            sum += marks[i, j];
+                            sum += _Marks[i, j];
                         }
-                    }
                     return sum;
+                }
+            }
+
+            public void Jump(int[] result)
+            {
+                if (_Marks == null || _Marks.GetLength(0) == 0 || _Marks.GetLength(1) == 0 || result == null || result.Length == 0) return;
+                if (_JNumber == 0)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        _Marks[0, i] = result[i];
+                    }
+                    _JNumber++;
+                }
+                else if (_JNumber == 1)
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        _Marks[1, i] = result[i];
+                    }
+                    _JNumber++;
                 }
             }
 
             public static void Sort(Participant[] array)
             {
-                if (array == null || array.Length <= 1) return;
-
-                for (int i = 0; i < array.Length - 1; i++)
+                if (array.Length < 0) return;
+                for (int i = 0; i < array.Length; i++)
                 {
                     for (int j = 0; j < array.Length - i - 1; j++)
                     {
@@ -189,6 +175,7 @@ namespace Lab_7
                             Participant temp = array[j];
                             array[j] = array[j + 1];
                             array[j + 1] = temp;
+                            
                         }
                     }
                 }
@@ -196,7 +183,19 @@ namespace Lab_7
 
             public void Print()
             {
-                Console.WriteLine($"{_name} {_surname} {TotalScore}");
+                Console.WriteLine();
+                Console.WriteLine($"Participant: {_Name} {_Surname}");
+                for (int i = 0; i < _Marks.GetLength(0); i++)
+                {
+                    Console.WriteLine();
+                    for (int j = 0; j < _Marks.GetLength(1); j++)
+                    {
+                        Console.Write($"{_Marks[i, j]} ");
+                    }
+
+                }
+                Console.WriteLine();
+                Console.WriteLine(TotalScore);
             }
         }
     }

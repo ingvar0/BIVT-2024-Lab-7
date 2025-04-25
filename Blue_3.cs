@@ -23,7 +23,10 @@ namespace Lab_7
                 {
                     if (_penaltyTimes == null) return null;
                     int[] _newpenaltytimes = new int[_penaltyTimes.Length];
-                    Array.Copy(_penaltyTimes, _newpenaltytimes, _newpenaltytimes.Length);
+                    for (int i = 0; i < _penaltyTimes.Length; i++)
+                    {
+                        _newpenaltytimes[i] = _penaltyTimes[i];
+                    }
                     return _newpenaltytimes;
                 }
             }
@@ -53,7 +56,7 @@ namespace Lab_7
             {
                 get
                 {
-                    if (_penaltyTimes == null) return false;
+                    if (_penaltyTimes == null || _penaltyTimes.Length == 0) return false;
                     for (int i = 0; i < _penaltyTimes.Length; i++)
                     {
                         if (_penaltyTimes[i] == 10)
@@ -74,8 +77,8 @@ namespace Lab_7
 
             public static void Sort(Participant[] array)
             {
-                if (array == null) return;
-                for (int i = 0; i < array.Length - 1; i++)
+                if (array == null || array.Length < 0) return;
+                for (int i = 0; i < array.Length; i++)
                 {
                     for (int j = 0; j < array.Length - 1 - i; j++)
                     {
