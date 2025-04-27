@@ -38,7 +38,7 @@ namespace Lab_7
                 _penaltyTimes = new int[0];
             }
 
-            public virtual int Total
+            public int Total
             {
                 get
                 {
@@ -70,14 +70,14 @@ namespace Lab_7
 
             public virtual void PlayMatch(int time)
             {
-                if (_penaltyTimes == null) return;
+                if (_penaltyTimes == null || time < 0) return;
                 Array.Resize(ref _penaltyTimes, _penaltyTimes.Length + 1);
                 _penaltyTimes[_penaltyTimes.Length - 1] = time;
             }
 
             public static void Sort(Participant[] array)
             {
-                if (array == null || array.Length < 0) return;
+                if (array == null || array.Length <= 1) return;
                 for (int i = 0; i < array.Length; i++)
                 {
                     for (int j = 0; j < array.Length - 1 - i; j++)
